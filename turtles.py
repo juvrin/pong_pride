@@ -32,8 +32,9 @@ def game_loop():
     #NOTES: here I was struggling with understanding the heading parameter,
     #especially since I was using a circle. But it's about which way the turtle is
     #turned, which is easier to see if you're using an arrow shape
-    ball.left(190)
-    new_heading = 0
+    ball.left(150)
+    new_heading_paddle = 0
+    new_heading_ceiling = 0
     
     while True:
 
@@ -44,25 +45,36 @@ def game_loop():
         right_y_lower = right.ycor() - 60
         right_y_upper = right.ycor() + 60
         right.sety(ball.ycor())
-
-        # #MOETNOG for testing only
-        # print(f"ball x: {ball.xcor()}\nball y: {ball.ycor()}\nleft x: {left.xcor()}\nright x:{right.xcor()}\n"
-        #            f"left y: {left.ycor()}\nleft y lower: {left_y_lower}\nleft y upper: {left_y_upper}\n"
-        #            f"right y: {right.ycor()}\nright y lower:{right_y_lower}\nright y upper:{right_y_upper}") 
-        
-
-        #Check if ball "hits" the beam
-        #NOTES: here I was struggling with how to calculate the out angle because maths :)
-        #NOTES: I also had to think about matching the x-coordinates exactly 
-        # but the y not exactly because the beam is a range of y-coordinates (and not just one fixed point)
-        if(((-385.0 <= ball.xcor() <= -375.0) and left_y_lower <= ball.ycor() <= left_y_upper) or 
-        ((375.0 <= ball.xcor() <= 385.0) and right_y_lower <= ball.ycor() <= right_y_upper)):
-            new_heading = abs(ball.heading() - 180.0)
-            ball.setheading(new_heading)
+        old_heading = ball.heading()
+       
+        #Bounce ball from ceiling
+        if ball.ycor() <= -300 or ball.ycor() >= 300:
+            new_heading_ceiling = 360- ball.heading()
+            ball.setheading(new_heading_ceiling)
+            # print(f"BOUNCE FROM CEILING\nball x: {ball.xcor()}\nball y: {ball.ycor()}\nball old heading: {old_heading}\n"
+            #         f"bal new heading: {new_heading_ceiling}\nleft x: {left.xcor()}\nright x:{right.xcor()}\n"
+            # f"left y: {left.ycor()}\nleft y lower: {left_y_lower}\nleft y upper: {left_y_upper}\n"
+            # f"right y: {right.ycor()}\nright y lower:{right_y_lower}\nright y upper:{right_y_upper}\n\n") 
             continue
 
-        elif ball.xcor() > 400 or ball.xcor() < -400 or ball.ycor() > 300 or ball.ycor() < -300:
+        #Bounce ball from paddle
+        if(((-385.0 <= ball.xcor() <= -375.0) and (left_y_lower <= ball.ycor() <= left_y_upper)) or 
+        ((375.0 <= ball.xcor() <= 385.0) and (right_y_lower <= ball.ycor() <= right_y_upper))):
+            new_heading_paddle = abs(ball.heading() - 180.0)
+            ball.setheading(new_heading_paddle)
+            # print(f"BOUNCE FROM PADDLE\nball x: {ball.xcor()}\nball y: {ball.ycor()}\nball old heading: {old_heading}\n"
+            #         f"bal new heading: {new_heading_ceiling}\nleft x: {left.xcor()}\nright x:{right.xcor()}\n"
+            # f"left y: {left.ycor()}\nleft y lower: {left_y_lower}\nleft y upper: {left_y_upper}\n"
+            # f"right y: {right.ycor()}\nright y lower:{right_y_lower}\nright y upper:{right_y_upper}\n\n") 
+            continue
+        
+        #Game Over
+        if ball.xcor() > 400 or ball.xcor() < -400:
             x = screen.textinput(title="GAME OVER", prompt="Do you want to play again (y/n): ")
+            # print(f"GAME OVER\nball x: {ball.xcor()}\nball y: {ball.ycor()}\nball old heading: {old_heading}\n"
+            #         f"bal new heading: {new_heading_ceiling}\nleft x: {left.xcor()}\nright x:{right.xcor()}\n"
+            # f"left y: {left.ycor()}\nleft y lower: {left_y_lower}\nleft y upper: {left_y_upper}\n"
+            # f"right y: {right.ycor()}\nright y lower:{right_y_lower}\nright y upper:{right_y_upper}\n\n") 
             if x == "y":
                 #MOETNOG dit werkt nog niet
                 ball.home
