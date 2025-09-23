@@ -1,124 +1,172 @@
-from turtle import *
-
+from turtle import Turtle, Screen
+from random import randint
+import sys
 
 def move_up():
     """Control functions up"""
-    y = left.ycor() + 15
+    y = left.turtle.ycor() + 15
     if y > 220:
         y = 220
-    left.sety(y)
+    left.turtle.sety(y)
 
 def move_down():
     """Control functions down"""
-    y = left.ycor() - 15
+    y = left.turtle.ycor() - 15
     if y < -220:
         y = -220
-    left.sety(y)
+    left.turtle.sety(y)
 
-def set_screen(image,image2):
-    """Initialize screen"""
-    screen = Screen()
-    screen.setup(800,600)
-    screen.bgcolor("#FFBFF2")
-    screen.title("Pong - Pride Edition")
-    screen.addshape(image)
-    screen.addshape(image2)
-    return screen
+def esc():
+    graphics.screen.bye()
+    sys.exit(0)
 
+
+class Graphics():
+    def __init__(self):
+        self.screen = Screen()
+        self.screen.setup(800,600)
+        self.screen.bgcolor("#FFBFF2")
+        self.screen.title("Pong - Pride Edition")
+        self.screen.addshape(image)
+        self.screen.addshape(image2)
+
+class Paddles:
+    def __init__(self, setx):
+        """Parent class for both paddes"""
+        self.turtle = Turtle()
+        self.turtle.hideturtle() 
+        self.turtle.penup() 
+        self.turtle.shape(image)
+        self.turtle.setx(setx)
+        self.turtle.showturtle()
+    
+class Ball():
+    def __init__(self):
+        self.turtle = Turtle()
+        self.turtle.penup()
+        self.turtle.shape(image2)
+        self.turtle.home()
+        self.turtle.speed(0) 
+
+def random_header():
+    quadrant = randint(0,3)
+    match quadrant:
+        case 0:
+            rand_head = randint(0,45)
+        case 1:
+            rand_head = randint(135,180)
+        case 2:
+            rand_head = randint(180,225)
+        case 3:
+            rand_head = randint(315,360)
+    return rand_head
+
+def update_scores(player_score,comp_score):
+    #Add scores
+    scores = Turtle()
+    scores.hideturtle()
+    scores.penup()
+    scores.goto(-250, 270)
+    scores.write(f"Player: {player_score} Computer: {comp_score}", align = "center", font= ("Courier", 16, "bold"))
 
 def game_loop():
     """Set game loop"""
-    #Create movement of ball
-    #NOTES: here I was struggling with understanding the heading parameter,
-    #especially since I was using a circle. But it's about which way the turtle is
-    #turned, which is easier to see if you're using an arrow shape
-    ball.left(150)
+
+    #Create initial movement of ball
+    rand_head = random_header()
+    ball.turtle.setheading(rand_head)
     new_heading_paddle = 0
     new_heading_ceiling = 0
-    
-    while True:
+    player_score = 0
+    comp_score = 0
+  
+    scores = Turtle()
+    scores.hideturtle()
+    scores.penup()
+    scores.goto(-250, 270)
+    scores.write(f"Player: {player_score} Computer: {comp_score}", align = "center", font= ("Courier", 16, "bold"))
 
+    while True:
         #MOETNOG for testing dat ik dit groter zet, normaal is 1 goed
-        ball.forward(5)
-        left_y_lower = left.ycor() - 60
-        left_y_upper = left.ycor() + 60
-        right_y_lower = right.ycor() - 60
-        right_y_upper = right.ycor() + 60
-        right.sety(ball.ycor())
-        old_heading = ball.heading()
-       
+        ball.turtle.forward(5)
+        left_y_lower = left.turtle.ycor() - 60
+        left_y_upper = left.turtle.ycor() + 60
+        right_y_lower = right.turtle.ycor() - 60
+        right_y_upper = right.turtle.ycor() + 60
+        right.turtle.sety(ball.turtle.ycor())
+        
         #Bounce ball from ceiling
-        if ball.ycor() <= -300 or ball.ycor() >= 300:
-            new_heading_ceiling = 360- ball.heading()
-            ball.setheading(new_heading_ceiling)
-            # print(f"BOUNCE FROM CEILING\nball x: {ball.xcor()}\nball y: {ball.ycor()}\nball old heading: {old_heading}\n"
-            #         f"bal new heading: {new_heading_ceiling}\nleft x: {left.xcor()}\nright x:{right.xcor()}\n"
-            # f"left y: {left.ycor()}\nleft y lower: {left_y_lower}\nleft y upper: {left_y_upper}\n"
-            # f"right y: {right.ycor()}\nright y lower:{right_y_lower}\nright y upper:{right_y_upper}\n\n") 
+        if ball.turtle.ycor() <= -300 or ball.turtle.ycor() >= 300:
+            new_heading_ceiling = 360- ball.turtle.heading()
+            ball.turtle.setheading(new_heading_ceiling)
             continue
 
         #Bounce ball from paddle
-        if(((-385.0 <= ball.xcor() <= -375.0) and (left_y_lower <= ball.ycor() <= left_y_upper)) or 
-        ((375.0 <= ball.xcor() <= 385.0) and (right_y_lower <= ball.ycor() <= right_y_upper))):
-            new_heading_paddle = abs(ball.heading() - 180.0)
-            ball.setheading(new_heading_paddle)
-            # print(f"BOUNCE FROM PADDLE\nball x: {ball.xcor()}\nball y: {ball.ycor()}\nball old heading: {old_heading}\n"
-            #         f"bal new heading: {new_heading_ceiling}\nleft x: {left.xcor()}\nright x:{right.xcor()}\n"
-            # f"left y: {left.ycor()}\nleft y lower: {left_y_lower}\nleft y upper: {left_y_upper}\n"
-            # f"right y: {right.ycor()}\nright y lower:{right_y_lower}\nright y upper:{right_y_upper}\n\n") 
+        if(((-385.0 <= ball.turtle.xcor() <= -375.0) and (left_y_lower <= ball.turtle.ycor() <= left_y_upper)) or 
+        ((375.0 <= ball.turtle.xcor() <= 385.0) and (right_y_lower <= ball.turtle.ycor() <= right_y_upper))):
+            new_heading_paddle = abs(ball.turtle.heading() - 180.0)
+            ball.turtle.setheading(new_heading_paddle)
             continue
         
+        #Scores
+        if ball.turtle.xcor() > 400:
+            player_score += 1    
+            ball.turtle.home()
+            rand_head = random_header()
+            ball.turtle.setheading(rand_head)
+            left.turtle.sety(0)
+            scores.reset()
+            update_scores(player_score,comp_score)
+            continue
+
+
+        if ball.turtle.xcor() < -400:
+            comp_score += 1
+            ball.turtle.home()
+            rand_head = random_header()
+            ball.turtle.setheading(rand_head)
+            left.turtle.sety(0)
+            scores.reset()
+            update_scores(player_score,comp_score)
+            continue
+
         #Game Over
-        if ball.xcor() > 400 or ball.xcor() < -400:
-            x = screen.textinput(title="GAME OVER", prompt="Do you want to play again (y/n): ")
-            # print(f"GAME OVER\nball x: {ball.xcor()}\nball y: {ball.ycor()}\nball old heading: {old_heading}\n"
-            #         f"bal new heading: {new_heading_ceiling}\nleft x: {left.xcor()}\nright x:{right.xcor()}\n"
-            # f"left y: {left.ycor()}\nleft y lower: {left_y_lower}\nleft y upper: {left_y_upper}\n"
-            # f"right y: {right.ycor()}\nright y lower:{right_y_lower}\nright y upper:{right_y_upper}\n\n") 
+        #MOETNOG for testing op 2 gezet maar beide scores moeten op == 10 staan
+        if player_score == 2  or comp_score == 2:
+            x = graphics.screen.textinput(title="GAME OVER", prompt="Do you want to play again (y/n): ")
+            print(x)
             if x == "y":
-                #MOETNOG dit werkt nog niet
-                ball.home
-            if x == "n":
-                screen.bye()
+                #MOETNOG dit werkt helemaal niet en de keyboard controls werken niet als je opnieuw speelt
+                ball.turtle.home()
+                rand_head = random_header()
+                ball.turtle.setheading(rand_head)
+                left.turtle.sety(0)
+                continue
+            elif x == "n":
+                esc()
                 break
 
 
 def main():
     #Link control functions to keyboard keys
-    screen.onkeypress(move_up, "Up")
-    screen.onkeypress(move_down,"Down")
-    screen.listen()
+    graphics.screen.listen()
+    graphics.screen.onkeypress(move_up, "Up")
+    graphics.screen.onkeypress(move_down,"Down")
+    graphics.screen.onkeypress(esc, "q")
     game_loop()       
-    screen.mainloop()
+    graphics.screen.mainloop()
 
 
 if __name__ == "__main__":
     image = "pride_flag.gif"
     image2 = "unicorn.gif"
-    screen = set_screen(image,image2)
-
-    #Initialize turtles
-    left = Turtle()
-    left.hideturtle() 
-    left.penup() 
-    left.shape(image)
-    left.setx(-380)
-    left.showturtle()
-
-    right = Turtle()
-    right.hideturtle() 
-    right.penup() 
-    right.shape(image)
-    right.setx(380)
-    right.showturtle()
-
-    #Add ball
-    ball = Turtle()
-    ball.penup()
-    ball.shape(image2)
-    ball.home()
-    ball.speed(0) 
-
+    
+    #Initialize screen and turtles
+    graphics = Graphics()
+    left = Paddles(-380)
+    right = Paddles(380)
+    ball = Ball()
+    
     main()
 
 
