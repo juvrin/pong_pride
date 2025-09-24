@@ -2,7 +2,6 @@ from turtle import Turtle, Screen
 from random import randint
 import sys
 
-
 class Graphics():
     """Model the screen"""
 
@@ -89,12 +88,17 @@ def random_header():
             rand_head = randint(315,360)
     return rand_head
 
-def game_loop():
-    """Set game loop"""
-
-    #Create initial movement of ball
+def reset_game():
+    """Reset position and header of ball, reset positon of left paddle"""
+    ball.turtle.home()
     rand_head = random_header()
     ball.turtle.setheading(rand_head)
+    left.turtle.sety(0)
+
+def game_loop():
+    """Set game loop"""
+    
+    reset_game()
     new_heading_paddle = 0
     new_heading_ceiling = 0
     player_score = 0
@@ -102,13 +106,15 @@ def game_loop():
     print(scores.get_scores(player_score,comp_score))
 
     while True:
-        #MOETNOG for testing dat ik dit groter zet, normaal is 1 goed
-        ball.turtle.forward(5)
+        ball.turtle.forward(8)
         left_y_lower = left.turtle.ycor() - 60
         left_y_upper = left.turtle.ycor() + 60
         right_y_lower = right.turtle.ycor() - 60
         right_y_upper = right.turtle.ycor() + 60
-        right.turtle.sety(ball.turtle.ycor())
+
+        #Computer paddles copies ycor of ball
+        if -220 < ball.turtle.ycor() < 220:
+            right.turtle.sety(ball.turtle.ycor())
         
         #Bounce ball from ceiling
         if ball.turtle.ycor() <= -300 or ball.turtle.ycor() >= 300:
@@ -125,39 +131,28 @@ def game_loop():
         
         #Scores
         if ball.turtle.xcor() > 400:
-            player_score += 1    
-            ball.turtle.home()
-            rand_head = random_header()
-            ball.turtle.setheading(rand_head)
-            left.turtle.sety(0)
+            player_score += 1   
+            reset_game() 
             scores.get_scores(player_score,comp_score)
             continue
 
         if ball.turtle.xcor() < -400:
             comp_score += 1
-            ball.turtle.home()
-            rand_head = random_header()
-            ball.turtle.setheading(rand_head)
-            left.turtle.sety(0)
+            reset_game() 
             scores.get_scores(player_score,comp_score)
             continue
 
         #Game Over
-        #MOETNOG for testing op 2 gezet maar beide scores moeten op == 10 staan
-        if player_score == 2  or comp_score == 2:
+        if player_score == 10  or comp_score == 10:
             x = graphics.screen.textinput(title="GAME OVER", prompt="Do you want to play again (y/n): ")
-            print(x)
             if x == "y":
-                #MOETNOG dit werkt helemaal niet en de keyboard controls werken niet als je opnieuw speelt
-                ball.turtle.home()
-                rand_head = random_header()
-                ball.turtle.setheading(rand_head)
-                left.turtle.sety(0)
-                continue
+                main()
+            elif x == None:
+                esc() 
+                break
             elif x == "n":
                 esc()
                 break
-
 
 def main():
     """Link control functions to keyboard keys"""
