@@ -2,6 +2,60 @@ from turtle import Turtle, Screen
 from random import randint
 import sys
 
+
+class Graphics():
+    """Model the screen"""
+
+    def __init__(self):
+        """Initialize attributes of screen"""
+        self.screen = Screen()
+        self.screen.setup(800,600)
+        self.screen.bgcolor("#FFBFF2")
+        self.screen.title("Pong - Pride Edition")
+        self.screen.addshape(image)
+        self.screen.addshape(image2)
+
+class Paddles:
+    """Parent class for both paddes"""
+
+    def __init__(self, setx):
+        """Initialize attributes of paddles"""
+        self.turtle = Turtle()
+        self.turtle.hideturtle() 
+        self.turtle.penup() 
+        self.turtle.shape(image)
+        self.turtle.setx(setx)
+        self.turtle.showturtle()
+    
+class Ball():
+    """Class to model the ball/unicorn"""
+
+    def __init__(self):
+        """Initialize attributes ball"""
+        self.turtle = Turtle()
+        self.turtle.penup()
+        self.turtle.shape(image2)
+        self.turtle.home()
+        self.turtle.speed(0) 
+
+class Scores():
+    """Class for the scores of player and computer"""
+
+    def __init__(self):
+        """Initialize score attributes"""
+        self.turtle = Turtle()
+        self.turtle.hideturtle()
+        self.turtle.penup()
+        self.turtle.goto(-250, 270)
+    
+    def get_scores(self, player_score, comp_score):
+        """Reset scores and write scors to screen again."""
+        self.turtle.reset()
+        self.turtle.hideturtle()
+        self.turtle.penup()
+        self.turtle.goto(-250, 270)
+        return self.turtle.write(f"Player: {player_score} Computer: {comp_score}", align = "center", font= ("Courier", 16, "bold"))  
+
 def move_up():
     """Control functions up"""
     y = left.turtle.ycor() + 15
@@ -17,38 +71,12 @@ def move_down():
     left.turtle.sety(y)
 
 def esc():
+    """Exit screen and terminate execution"""
     graphics.screen.bye()
     sys.exit(0)
 
-
-class Graphics():
-    def __init__(self):
-        self.screen = Screen()
-        self.screen.setup(800,600)
-        self.screen.bgcolor("#FFBFF2")
-        self.screen.title("Pong - Pride Edition")
-        self.screen.addshape(image)
-        self.screen.addshape(image2)
-
-class Paddles:
-    def __init__(self, setx):
-        """Parent class for both paddes"""
-        self.turtle = Turtle()
-        self.turtle.hideturtle() 
-        self.turtle.penup() 
-        self.turtle.shape(image)
-        self.turtle.setx(setx)
-        self.turtle.showturtle()
-    
-class Ball():
-    def __init__(self):
-        self.turtle = Turtle()
-        self.turtle.penup()
-        self.turtle.shape(image2)
-        self.turtle.home()
-        self.turtle.speed(0) 
-
 def random_header():
+    """Random direction/header of the ball"""
     quadrant = randint(0,3)
     match quadrant:
         case 0:
@@ -61,14 +89,6 @@ def random_header():
             rand_head = randint(315,360)
     return rand_head
 
-def update_scores(player_score,comp_score):
-    #Add scores
-    scores = Turtle()
-    scores.hideturtle()
-    scores.penup()
-    scores.goto(-250, 270)
-    scores.write(f"Player: {player_score} Computer: {comp_score}", align = "center", font= ("Courier", 16, "bold"))
-
 def game_loop():
     """Set game loop"""
 
@@ -79,12 +99,7 @@ def game_loop():
     new_heading_ceiling = 0
     player_score = 0
     comp_score = 0
-  
-    scores = Turtle()
-    scores.hideturtle()
-    scores.penup()
-    scores.goto(-250, 270)
-    scores.write(f"Player: {player_score} Computer: {comp_score}", align = "center", font= ("Courier", 16, "bold"))
+    print(scores.get_scores(player_score,comp_score))
 
     while True:
         #MOETNOG for testing dat ik dit groter zet, normaal is 1 goed
@@ -115,10 +130,8 @@ def game_loop():
             rand_head = random_header()
             ball.turtle.setheading(rand_head)
             left.turtle.sety(0)
-            scores.reset()
-            update_scores(player_score,comp_score)
+            scores.get_scores(player_score,comp_score)
             continue
-
 
         if ball.turtle.xcor() < -400:
             comp_score += 1
@@ -126,8 +139,7 @@ def game_loop():
             rand_head = random_header()
             ball.turtle.setheading(rand_head)
             left.turtle.sety(0)
-            scores.reset()
-            update_scores(player_score,comp_score)
+            scores.get_scores(player_score,comp_score)
             continue
 
         #Game Over
@@ -148,7 +160,7 @@ def game_loop():
 
 
 def main():
-    #Link control functions to keyboard keys
+    """Link control functions to keyboard keys"""
     graphics.screen.listen()
     graphics.screen.onkeypress(move_up, "Up")
     graphics.screen.onkeypress(move_down,"Down")
@@ -161,11 +173,12 @@ if __name__ == "__main__":
     image = "pride_flag.gif"
     image2 = "unicorn.gif"
     
-    #Initialize screen and turtles
+    #Initialize screen, paddles and ball
     graphics = Graphics()
     left = Paddles(-380)
     right = Paddles(380)
     ball = Ball()
+    scores = Scores()
     
     main()
 
