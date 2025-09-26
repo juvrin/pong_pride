@@ -5,7 +5,7 @@ import sys
 class Graphics():
     """Model the screen"""
 
-    def __init__(self):
+    def __init__(self,image,image2):
         """Initialize attributes of screen"""
         self.screen = Screen()
         self.screen.setup(800,600)
@@ -17,7 +17,7 @@ class Graphics():
 class Paddles:
     """Parent class for both paddes"""
 
-    def __init__(self, setx):
+    def __init__(self, setx, image):
         """Initialize attributes of paddles"""
         self.turtle = Turtle()
         self.turtle.hideturtle() 
@@ -29,7 +29,7 @@ class Paddles:
 class Ball():
     """Class to model the ball/unicorn"""
 
-    def __init__(self):
+    def __init__(self,image2):
         """Initialize attributes ball"""
         self.turtle = Turtle()
         self.turtle.penup()
@@ -55,21 +55,21 @@ class Scores():
         self.turtle.goto(-250, 270)
         return self.turtle.write(f"Player: {player_score} Computer: {comp_score}", align = "center", font= ("Courier", 16, "bold"))  
 
-def move_up():
+def move_up(left):
     """Control functions up"""
     y = left.turtle.ycor() + 15
     if y > 220:
         y = 220
     left.turtle.sety(y)
 
-def move_down():
+def move_down(left):
     """Control functions down"""
     y = left.turtle.ycor() - 15
     if y < -220:
         y = -220
     left.turtle.sety(y)
 
-def esc():
+def esc(graphics):
     """Exit screen and terminate execution"""
     graphics.screen.bye()
     sys.exit(0)
@@ -88,17 +88,17 @@ def random_header():
             rand_head = randint(315,360)
     return rand_head
 
-def reset_game():
+def reset_game(ball, left):
     """Reset position and header of ball, reset positon of left paddle"""
     ball.turtle.home()
     rand_head = random_header()
     ball.turtle.setheading(rand_head)
     left.turtle.sety(0)
 
-def game_loop():
+def game_loop(graphics, left, right, ball, scores):
     """Set game loop"""
     
-    reset_game()
+    reset_game(ball, left)
     new_heading_paddle = 0
     new_heading_ceiling = 0
     player_score = 0
@@ -132,13 +132,13 @@ def game_loop():
         #Scores
         if ball.turtle.xcor() > 400:
             player_score += 1   
-            reset_game() 
+            reset_game(ball, left)
             scores.get_scores(player_score,comp_score)
             continue
 
         if ball.turtle.xcor() < -400:
             comp_score += 1
-            reset_game() 
+            reset_game(ball, left) 
             scores.get_scores(player_score,comp_score)
             continue
 
@@ -148,19 +148,19 @@ def game_loop():
             if x == "y":
                 main()
             elif x == None:
-                esc() 
+                esc(graphics) 
                 break
             elif x == "n":
-                esc()
+                esc(graphics)
                 break
 
 def main():
     """Link control functions to keyboard keys"""
     graphics.screen.listen()
-    graphics.screen.onkeypress(move_up, "Up")
-    graphics.screen.onkeypress(move_down,"Down")
-    graphics.screen.onkeypress(esc, "q")
-    game_loop()       
+    graphics.screen.onkeypress(lambda: move_up(left), "Up")
+    graphics.screen.onkeypress(lambda: move_down(left),"Down")
+    graphics.screen.onkeypress(lambda: esc(graphics), "q")
+    game_loop(graphics, left, right, ball, scores)       
     graphics.screen.mainloop()
 
 
@@ -169,12 +169,12 @@ if __name__ == "__main__":
     image2 = "unicorn.gif"
     
     #Initialize screen, paddles and ball
-    graphics = Graphics()
-    left = Paddles(-380)
-    right = Paddles(380)
-    ball = Ball()
+    graphics = Graphics(image,image2)
+    left = Paddles(-380,image)
+    right = Paddles(380,image)
+    ball = Ball(image2)
     scores = Scores()
-    
+
     main()
 
 
