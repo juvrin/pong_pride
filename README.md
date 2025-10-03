@@ -36,7 +36,7 @@ This project has challenged me to work with the Turtle module and to further adv
 ## Contact
 
 Jules Vrinten https://www.linkedin.com/in/jules-vrinten/ 
-https://github.com/spacecookie007
+https://github.com/juvrin 
 
 
 ## License
