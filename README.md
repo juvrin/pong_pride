@@ -2,7 +2,7 @@
 
 Pong Pride Edition is a version of the classic pong game with a pride theme. This is a simple single player version in which you use a rainbow paddle to bounce a unicorn-shaped ball around. The game was built using the Turtle module in Python. 
 
-![Pong screenshot](/img/screenshot.png)
+<img src="/img/screenshot.png" alt="Screenshot of pong game" width="403" height="318">
 
 ## Background
 
